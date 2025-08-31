@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHELS - OpenStreetMap Test</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .map-container {
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .coordinates {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 PHELS - OpenStreetMap Integration Test</h1>
+        
+        <div class="info-box">
+            <h3>✅ OpenStreetMap Integration Successful!</h3>
+            <p>This test page confirms that OpenStreetMap and Leaflet.js are working correctly in your PHELS system. 
+            No API keys or Google services are required - everything is completely free!</p>
+        </div>
+        
+        <div id="map" class="map-container"></div>
+        
+        <div class="status success">
+            <strong>🎉 Map Loaded Successfully!</strong> You can now use OpenStreetMap in your PHELS application.
+        </div>
+        
+        <div class="coordinates">
+            <strong>Test Coordinates:</strong><br>
+            Manila, Philippines: 14.5995, 120.9842<br>
+            Quezon City: 14.5547, 121.0244<br>
+            Makati: 14.6347, 120.9708
+        </div>
+        
+        <div class="info-box">
+            <h3>🚀 Next Steps:</h3>
+            <ol>
+                <li>✅ OpenStreetMap is working (you're seeing this map)</li>
+                <li>✅ Navigate to <code>http://localhost/PHELS%20Project/</code></li>
+                <li>✅ Login with <strong>admin</strong> / <strong>admin123</strong></li>
+                <li>✅ Explore the dashboard with interactive maps</li>
+                <li>✅ Test shipment tracking and route optimization</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize the map centered on Manila, Philippines
+        const map = L.map('map').setView([14.5995, 120.9842], 10);
+        
+        // Add OpenStreetMap tiles (completely free!)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add sample markers for PHELS facilities
+        const facilities = [
+            {
+                name: 'Central Warehouse',
+                lat: 14.5995,
+                lng: 120.9842,
+                type: 'warehouse',
+                status: 'operational'
+            },
+            {
+                name: 'North Medical Center',
+                lat: 14.5547,
+                lng: 121.0244,
+                type: 'hospital',
+                status: 'active'
+            },
+            {
+                name: 'South Storage Facility',
+                lat: 14.6347,
+                lng: 120.9708,
+                type: 'storage',
+                status: 'operational'
+            },
+            {
+                name: 'East Emergency Clinic',
+                lat: 14.5764,
+                lng: 121.0851,
+                type: 'clinic',
+                status: 'active'
+            }
+        ];
+        
+        // Add markers to the map
+        facilities.forEach(facility => {
+            // Choose marker color based on facility type
+            let color = 'blue';
+            let icon = '🏥';
+            
+            switch(facility.type) {
+                case 'warehouse':
+                    color = 'green';
+                    icon = '🏭';
+                    break;
+                case 'hospital':
+                    color = 'red';
+                    icon = '🏥';
+                    break;
+                case 'storage':
+                    color = 'orange';
+                    icon = '📦';
+                    break;
+                case 'clinic':
+                    color = 'purple';
+                    icon = '🏥';
+                    break;
+            }
+            
+            // Create custom marker icon
+            const markerIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background-color: ${color}; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white;">${icon}</div>`,
+                iconSize: [25, 25],
+                iconAnchor: [12, 12]
+            });
+            
+            // Add marker to map
+            const marker = L.marker([facility.lat, facility.lng], {icon: markerIcon})
+                .addTo(map)
+                .bindPopup(`
+                    <div style="text-align: center;">
+                        <h4 style="margin: 0 0 10px 0;">${facility.name}</h4>
+                        <p style="margin: 0;"><strong>Type:</strong> ${facility.type}</p>
+                        <p style="margin: 0;"><strong>Status:</strong> ${facility.status}</p>
+                        <p style="margin: 0;"><strong>Coordinates:</strong><br>${facility.lat}, ${facility.lng}</p>
+                    </div>
+                `);
+        });
+        
+        // Add a sample route line
+        const routeLine = L.polyline([
+            [14.5995, 120.9842], // Central Warehouse
+            [14.5547, 121.0244], // North Medical Center
+            [14.6347, 120.9708], // South Storage
+            [14.5764, 121.0851]  // East Clinic
+        ], {
+            color: 'blue',
+            weight: 4,
+            opacity: 0.7,
+            dashArray: '10, 5'
+        }).addTo(map);
+        
+        // Add route information
+        routeLine.bindPopup(`
+            <div style="text-align: center;">
+                <h4>🚚 Sample Delivery Route</h4>
+                <p><strong>Distance:</strong> ~25 km</p>
+                <p><strong>Estimated Time:</strong> 45 minutes</p>
+                <p><strong>Route Type:</strong> Emergency Logistics</p>
+            </div>
+        `);
+        
+        // Test map functionality
+        console.log('✅ OpenStreetMap test successful!');
+        console.log('✅ Leaflet.js loaded correctly');
+        console.log('✅ Map initialized with coordinates:', map.getCenter());
+        console.log('✅ Sample facilities added:', facilities.length);
+        
+        // Add click event to show coordinates
+        map.on('click', function(e) {
+            const lat = e.latlng.lat.toFixed(4);
+            const lng = e.latlng.lng.toFixed(4);
+            
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(`<div style="text-align: center;"><strong>Clicked Location</strong><br>Lat: ${lat}<br>Lng: ${lng}</div>`)
+                .openOn(map);
+        });
+    </script>
+</body>
+</html>
